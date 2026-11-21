@@ -1,0 +1,73 @@
+<resources>
+    <string name="app_name">Hackus Mail Mobile</string>
+    <string name="tagline">Next-Gen Mail Checker &amp; Multi-Protocol Suite</string>
+
+    <!-- Navigation Tabs -->
+    <string name="nav_dashboard">Checker</string>
+    <string name="nav_viewer">Mailbox</string>
+    <string name="nav_rules">Rules</string>
+    <string name="nav_tools">Tools</string>
+    <string name="nav_proxy">Proxies</string>
+    <string name="nav_export">Export</string>
+
+    <!-- Dashboard -->
+    <string name="status_idle">IDLE</string>
+    <string name="status_running">RUNNING</string>
+    <string name="status_paused">PAUSED</string>
+    <string name="status_stopped">STOPPED</string>
+    <string name="status_completed">COMPLETED</string>
+    <string name="btn_start">START AUDIT</string>
+    <string name="btn_pause">PAUSE</string>
+    <string name="btn_resume">RESUME</string>
+    <string name="btn_stop">STOP</string>
+    <string name="btn_load_combos">LOAD COMBOS</string>
+    <string name="metric_total">TOTAL</string>
+    <string name="metric_good">VALID</string>
+    <string name="metric_bad">INVALID</string>
+    <string name="metric_2fa">2FA / LOCKED</string>
+    <string name="metric_errors">ERRORS</string>
+    <string name="metric_hits">SEARCH HITS</string>
+    <string name="metric_cpm">CPM</string>
+    <string name="metric_speed">CHECKS / SEC</string>
+    <string name="metric_elapsed">ELAPSED</string>
+    <string name="metric_eta">ETA</string>
+    <string name="threads_label">Concurrency Threads: %1$d</string>
+    <string name="timeout_label">Timeout: %1$ds</string>
+
+    <!-- Tools -->
+    <string name="tool_normalize">Normalize (Standardize : ; |)</string>
+    <string name="tool_distinct">Deduplicate (Remove Duplicates)</string>
+    <string name="tool_sort_domains">Split by Domain (@gmail, @yahoo...)</string>
+    <string name="tool_sort">Sort (A-Z / Domain / Length)</string>
+    <string name="tool_shuffle">Shuffle (Randomize Order)</string>
+    <string name="tool_merge">Merge Multiple Lists</string>
+    <string name="btn_process">RUN PROCESS</string>
+    <string name="btn_copy_result">COPY OUTPUT</string>
+    <string name="btn_export_result">SAVE AS FILE</string>
+
+    <!-- Viewer -->
+    <string name="viewer_login_title">Connect to Mailbox</string>
+    <string name="viewer_email_hint">Email address</string>
+    <string name="viewer_password_hint">Password / App Password</string>
+    <string name="viewer_connect_btn">CONNECT</string>
+    <string name="viewer_folders">Folders</string>
+    <string name="viewer_messages">Messages</string>
+    <string name="viewer_body_html">HTML View</string>
+    <string name="viewer_body_plain">Plain Text</string>
+    <string name="viewer_headers">Raw Headers</string>
+    <string name="viewer_attachments">Attachments</string>
+
+    <!-- Proxies -->
+    <string name="proxy_mode_direct">Direct (No Proxy)</string>
+    <string name="proxy_mode_http">HTTP / HTTPS</string>
+    <string name="proxy_mode_socks4">SOCKS4</string>
+    <string name="proxy_mode_socks5">SOCKS5</string>
+    <string name="proxy_btn_load">LOAD PROXY LIST</string>
+    <string name="proxy_btn_fetch_url">FETCH FROM URL</string>
+    <string name="proxy_btn_test_all">TEST ALL PINGS</string>
+
+    <!-- Foreground Service -->
+    <string name="notification_channel_name">Mail Checker Progress</string>
+    <string name="notification_channel_desc">Shows ongoing checking status and hits</string>
+    <string name="notification_hit_title">New Search Hit Detected!</string>
+</resources>

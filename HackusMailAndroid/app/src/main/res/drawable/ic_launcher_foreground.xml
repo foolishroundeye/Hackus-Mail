@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Glowing Hexagon Mail Icon -->
+    <path
+        android:fillColor="#00E5FF"
+        android:pathData="M70,30H38C33.6,30 30,33.6 30,38v32c0,4.4 3.6,8 8,8h32c4.4,0 8,-3.6 8,-8V38C78,33.6 74.4,30 70,30z M70,44L54,54 38,44v-6l16,10 16,-10V44z"/>
+    <path
+        android:strokeColor="#7C4DFF"
+        android:strokeWidth="2"
+        android:pathData="M24,54 L54,20 L84,54 L54,88 Z"/>
+</vector>

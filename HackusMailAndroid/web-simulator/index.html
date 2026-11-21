@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hackus Mail Mobile — Next-Gen Suite</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #070A11;
+            --bg-surface: #0E1526;
+            --bg-elevated: #162038;
+            --bg-card: #131B2E;
+            --border: #22314E;
+            --primary-cyan: #00E5FF;
+            --primary-blue: #00B0FF;
+            --accent-purple: #7C4DFF;
+            --status-good: #00E676;
+            --status-good-bg: rgba(0, 230, 118, 0.12);
+            --status-bad: #FF1744;
+            --status-bad-bg: rgba(255, 23, 68, 0.12);
+            --status-2fa: #FF9100;
+            --status-2fa-bg: rgba(255, 145, 0, 0.12);
+            --status-error: #FFEA00;
+            --status-hits: #D500F9;
+            --status-hits-bg: rgba(213, 0, 249, 0.15);
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            background: #030509;
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            overflow-x: hidden;
+        }
+
+        /* Simulator Frame */
+        .device-wrapper {
+            display: flex;
+            gap: 32px;
+            max-width: 1100px;
+            width: 100%;
+            align-items: flex-start;
+        }
+
+        .phone-frame {
+            width: 412px;
+            height: 846px;
+            background: var(--bg-main);
+            border-radius: 44px;
+            border: 8px solid #1E293B;
+            box-shadow: 0 25px 60px -15px rgba(0, 229, 255, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            height: 28px;
+            padding: 6px 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 600;
+            z-index: 10;
+        }
+
+        .notch {
+            width: 80px;
+            height: 14px;
+            background: #000;
+            border-radius: 0 0 10px 10px;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* App Toolbar */
+        .app-toolbar {
+            height: 54px;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .app-title-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .app-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #00E5FF, #7C4DFF);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            color: #070A11;
+            font-size: 13px;
+        }
+
+        .app-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary-cyan);
+            letter-spacing: 0.5px;
+        }
+
+        .app-subtitle {
+            font-size: 9px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .state-badge {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: var(--bg-elevated);
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .state-badge.running {
+            background: var(--status-good-bg);
+            color: var(--status-good);
+        }
+
+        .state-badge.paused {
+            background: var(--status-2fa-bg);
+            color: var(--status-2fa);
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .content-area::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .content-area::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        .tab-page {
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .tab-page.active {
+            display: flex;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .card-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-secondary);
+        }
+
+        /* Buttons */
+        .btn-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 10px;
+            padding: 9px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            filter: brightness(1.15);
+            transform: translateY(-1px);
+        }
+
+        .btn-cyan {
+            background: linear-gradient(135deg, #00E5FF, #00B0FF);
+            color: #070A11;
+            flex: 1;
+        }
+
+        .btn-tonal {
+            background: var(--bg-elevated);
+            color: var(--primary-cyan);
+            flex: 1;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .btn-outline.pause {
+            color: var(--status-2fa);
+            border-color: rgba(255, 145, 0, 0.4);
+        }
+
+        .btn-outline.stop {
+            color: var(--status-bad);
+            border-color: rgba(255, 23, 68, 0.4);
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-elevated);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00E5FF, #7C4DFF);
+            transition: width 0.3s;
+        }
+
+        .progress-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .metric-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 8px 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .metric-label {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .metric-val {
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            margin-top: 2px;
+        }
+
+        .val-good { color: var(--status-good); }
+        .val-bad { color: var(--status-bad); }
+        .val-hits { color: var(--status-hits); }
+        .val-2fa { color: var(--status-2fa); }
+        .val-err { color: var(--status-error); }
+        .val-total { color: var(--text-primary); }
+
+        /* Speed Banner */
+        .speed-banner {
+            display: flex;
+            justify-content: space-around;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .speed-unit-label {
+            font-size: 9px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .speed-unit-val {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary-cyan);
+            font-family: 'JetBrains Mono', monospace;
+            margin-top: 2px;
+        }
+
+        /* Live Feed */
+        .live-feed {
+            height: 250px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow-y: auto;
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .feed-item {
+            background: var(--bg-elevated);
+            border-radius: 8px;
+            padding: 6px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feed-status {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .feed-status.good { background: var(--status-good-bg); color: var(--status-good); }
+        .feed-status.bad { background: var(--status-bad-bg); color: var(--status-bad); }
+        .feed-status.hits { background: var(--status-hits-bg); color: var(--status-hits); }
+        .feed-status.tfa { background: var(--status-2fa-bg); color: var(--status-2fa); }
+        .feed-status.err { background: rgba(255, 234, 0, 0.12); color: var(--status-error); }
+
+        .feed-email {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-primary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 220px;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            height: 60px;
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 0 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            color: var(--text-muted);
+            font-size: 9px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            padding: 6px 8px;
+            border-radius: 8px;
+        }
+
+        .nav-item.active {
+            color: var(--primary-cyan);
+        }
+
+        .nav-item svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        /* Side Info Panel */
+        .info-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            padding: 10px 0;
+        }
+
+        .apk-badge-box {
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.1), rgba(124, 77, 255, 0.1));
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            border-radius: 18px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .apk-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-cyan);
+        }
+
+        .apk-meta {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #00E5FF, #7C4DFF);
+            color: #070A11;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 12px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .download-btn:hover {
+            filter: brightness(1.2);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 229, 255, 0.4);
+        }
+
+        .feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-item::before {
+            content: "✓";
+            color: var(--primary-cyan);
+            font-weight: bold;
+        }
+
+        /* Input Elements */
+        textarea, input[type="text"], input[type="password"] {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            padding: 8px 10px;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            outline: none;
+            width: 100%;
+        }
+
+        textarea:focus, input:focus {
+            border-color: var(--primary-cyan);
+        }
+
+        /* Chips */
+        .chip-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .chip {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 4px 10px;
+            font-size: 10px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .chip.active, .chip:hover {
+            background: var(--primary-cyan);
+            color: var(--bg-main);
+            font-weight: 700;
+            border-color: var(--primary-cyan);
+        }
+    </style>
+</head>
+<body>
+
+<div class="device-wrapper">
+    <!-- Android Phone Frame -->
+    <div class="phone-frame">
+        <div class="notch"></div>
+        <div class="status-bar">
+            <span>09:41</span>
+            <span>5G  ●  100%</span>
+        </div>
+
+        <div class="app-toolbar">
+            <div class="app-title-group">
+                <div class="app-icon">H</div>
+                <div>
+                    <div class="app-title">HACKUS MAIL MOBILE</div>
+                    <div class="app-subtitle">Multi-Protocol Engine</div>
+                </div>
+            </div>
+            <div class="state-badge" id="appStateBadge">IDLE</div>
+        </div>
+
+        <div class="content-area">
+            <!-- TAB 1: CHECKER DASHBOARD -->
+            <div class="tab-page active" id="tabDashboard">
+                <div class="card">
+                    <div class="btn-row">
+                        <button class="btn btn-tonal" id="btnLoadSample">LOAD COMBOS</button>
+                        <button class="btn btn-cyan" id="btnStartAudit">START AUDIT</button>
+                        <button class="btn btn-outline pause" id="btnPauseAudit">PAUSE</button>
+                        <button class="btn btn-outline stop" id="btnStopAudit">STOP</button>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-secondary);">
+                        <span id="sliderThreadsLabel">Threads: 10</span>
+                        <span>Timeout: 10s</span>
+                    </div>
+                    <input type="range" id="sliderThreads" min="1" max="50" value="10" style="accent-color: var(--primary-cyan); cursor: pointer;">
+
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-meta">
+                        <span id="progressPctText">0%</span>
+                        <span id="progressCountText">0 / 0</span>
+                    </div>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-box">
+                        <span class="metric-label val-good">VALID</span>
+                        <span class="metric-val val-good" id="countGood">0</span>
+                    </div>
+                    <div class="metric-box">
+                        <span class="metric-label val-bad">INVALID</span>
+                        <span class="metric-val val-bad" id="countBad">0</span>
+                    </div>
+                    <div class="metric-box">
+                        <span class="metric-label val-hits">HITS</span>
+                        <span class="metric-val val-hits" id="countHits">0</span>
+                    </div>
+                    <div class="metric-box">
+                        <span class="metric-label val-2fa">2FA / LOCKED</span>
+                        <span class="metric-val val-2fa" id="count2FA">0</span>
+                    </div>
+                    <div class="metric-box">
+                        <span class="metric-label val-err">ERRORS</span>
+                        <span class="metric-val val-err" id="countErrors">0</span>
+                    </div>
+                    <div class="metric-box">
+                        <span class="metric-label val-total">TOTAL</span>
+                        <span class="metric-val val-total" id="countTotal">0</span>
+                    </div>
+                </div>
+
+                <div class="speed-banner">
+                    <div>
+                        <div class="speed-unit-label">CPM</div>
+                        <div class="speed-unit-val" id="cpmVal">0</div>
+                    </div>
+                    <div>
+                        <div class="speed-unit-label">ELAPSED</div>
+                        <div class="speed-unit-val" id="elapsedVal">00:00:00</div>
+                    </div>
+                    <div>
+                        <div class="speed-unit-label">ETA</div>
+                        <div class="speed-unit-val" id="etaVal">--:--:--</div>
+                    </div>
+                </div>
+
+                <div class="card-title">LIVE AUDIT STREAM</div>
+                <div class="live-feed" id="liveFeed">
+                    <div style="color: var(--text-muted); font-size: 11px; text-align: center; padding: 20px;">
+                        Queue empty. Click "LOAD COMBOS" and "START AUDIT".
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: MAIL VIEWER -->
+            <div class="tab-page" id="tabViewer">
+                <div class="card">
+                    <div class="card-title">CONNECT TO MAILBOX</div>
+                    <input type="text" id="viewerEmail" placeholder="user@gmail.com" value="test.auditor@gmail.com">
+                    <input type="password" id="viewerPass" placeholder="App password / IMAP pass" value="••••••••••••">
+                    <button class="btn btn-cyan" id="btnConnectViewer">CONNECT &amp; FETCH INBOX</button>
+                </div>
+
+                <div class="card" id="viewerInboxCard">
+                    <div class="card-title">INBOX (3 UNREAD)</div>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <div class="feed-item" style="cursor: pointer;" onclick="openEmail('Steam Support', 'Your Steam purchase receipt', 'Nov 21', 'Thank you for your recent transaction on Steam. Total: $49.99.')">
+                            <div>
+                                <strong style="color: var(--primary-cyan);">Steam Support</strong>
+                                <div style="font-size: 10px; color: var(--text-muted);">Your Steam purchase receipt</div>
+                            </div>
+                            <span style="font-size: 9px; color: var(--text-secondary);">10:14 AM</span>
+                        </div>
+                        <div class="feed-item" style="cursor: pointer;" onclick="openEmail('Binance', 'Authorize New IP Login', 'Nov 20', 'Your verification code is 849201. Never share this code with anyone.')">
+                            <div>
+                                <strong style="color: var(--status-hits);">Binance Security</strong>
+                                <div style="font-size: 10px; color: var(--text-muted);">Authorize New IP Login (Code)</div>
+                            </div>
+                            <span style="font-size: 9px; color: var(--text-secondary);">Nov 20</span>
+                        </div>
+                        <div class="feed-item" style="cursor: pointer;" onclick="openEmail('PayPal', 'Receipt for your payment', 'Nov 19', 'You sent a payment of $120.00 USD to Digital Services Inc.')">
+                            <div>
+                                <strong style="color: var(--status-good);">service@paypal.com</strong>
+                                <div style="font-size: 10px; color: var(--text-muted);">Receipt for your payment</div>
+                            </div>
+                            <span style="font-size: 9px; color: var(--text-secondary);">Nov 19</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" id="emailDetailCard" style="display: none;">
+                    <div class="card-title" id="detailSubject">EMAIL DETAIL</div>
+                    <div style="font-size: 11px; color: var(--primary-cyan);" id="detailFrom">From: </div>
+                    <div style="background: var(--bg-elevated); padding: 10px; border-radius: 8px; font-size: 11px; line-height: 1.5;" id="detailBody">
+                        Body text
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: SEARCH RULES -->
+            <div class="tab-page" id="tabRules">
+                <div class="card">
+                    <div class="card-title">1-CLICK PRESET BUNDLES</div>
+                    <div class="chip-group">
+                        <span class="chip" onclick="addPreset('Steam', 'steampowered.com', 'order')">+ Steam Gaming</span>
+                        <span class="chip" onclick="addPreset('Epic Games', 'epicgames.com', 'receipt')">+ Epic Games</span>
+                        <span class="chip" onclick="addPreset('Binance', 'binance.com', 'verify')">+ Binance Crypto</span>
+                        <span class="chip" onclick="addPreset('PayPal', 'paypal.com', 'payment')">+ PayPal</span>
+                        <span class="chip" onclick="addPreset('Amazon', 'amazon.com', 'shipped')">+ Amazon</span>
+                        <span class="chip" onclick="addPreset('Netflix', 'netflix.com', 'membership')">+ Netflix</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">CUSTOM SEARCH QUERY</div>
+                    <input type="text" id="ruleName" placeholder="Rule Name (e.g. Coinbase, Discord)">
+                    <input type="text" id="ruleSender" placeholder="Sender Filter (e.g. coinbase.com)">
+                    <input type="text" id="ruleSubject" placeholder="Subject keyword (e.g. code, deposit)">
+                    <button class="btn btn-cyan" onclick="addCustomRule()">ADD RULE</button>
+                </div>
+
+                <div class="card-title">ACTIVE RULES (<span id="ruleCount">3</span>)</div>
+                <div id="activeRulesList" style="display: flex; flex-direction: column; gap: 6px;"></div>
+            </div>
+
+            <!-- TAB 4: COMBO TOOLS -->
+            <div class="tab-page" id="tabTools">
+                <div class="card">
+                    <div class="card-title">UTILITY ACTIONS</div>
+                    <div class="chip-group">
+                        <span class="chip active" id="chipNorm" onclick="selectTool('normalize')">Normalize (: ; |)</span>
+                        <span class="chip" id="chipDist" onclick="selectTool('distinct')">Deduplicate</span>
+                        <span class="chip" id="chipDom" onclick="selectTool('domains')">Domain Splitter</span>
+                        <span class="chip" id="chipSort" onclick="selectTool('sort')">Sort A-Z</span>
+                        <span class="chip" id="chipShuf" onclick="selectTool('shuffle')">Shuffle</span>
+                    </div>
+
+                    <textarea id="toolInput" rows="5" placeholder="user@gmail.com;pass123&#10;admin@yahoo.com|secret456&#10;user@gmail.com:pass123"></textarea>
+                    <button class="btn btn-cyan" onclick="runTool()">RUN PROCESS</button>
+                </div>
+
+                <div class="card" id="toolOutputCard" style="display: none;">
+                    <div class="card-title" id="toolOutputDetails" style="color: var(--status-good);">OUTPUT (0 LINES)</div>
+                    <textarea id="toolOutput" rows="6" readonly></textarea>
+                    <button class="btn btn-tonal" onclick="copyToolOutput()">COPY RESULT</button>
+                </div>
+            </div>
+
+            <!-- TAB 5: PROXY MANAGER -->
+            <div class="tab-page" id="tabProxy">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span class="card-title">PROXY ROTATION</span>
+                        <label style="display: flex; align-items: center; gap: 6px; font-size: 11px; cursor: pointer;">
+                            <input type="checkbox" id="chkProxyToggle" style="accent-color: var(--primary-cyan);" checked>
+                            Enable
+                        </label>
+                    </div>
+                    <textarea id="proxyInput" rows="4" placeholder="127.0.0.1:1080&#10;192.168.1.1:9050&#10;socks5://user:pass@10.0.0.1:1080"></textarea>
+                    <div class="btn-row">
+                        <button class="btn btn-cyan" onclick="loadProxies()">LOAD PROXIES</button>
+                        <button class="btn btn-tonal" onclick="testProxies()">TEST PINGS</button>
+                    </div>
+                </div>
+
+                <div class="card-title">PROXY POOL (<span id="proxyCount">2</span>)</div>
+                <div id="proxyList" style="display: flex; flex-direction: column; gap: 6px;"></div>
+            </div>
+
+            <!-- TAB 6: EXPORT & REPORTS -->
+            <div class="tab-page" id="tabExport">
+                <div class="card">
+                    <div class="card-title">EXPORT SETTINGS</div>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-primary);">
+                        <input type="checkbox" id="expValid" checked style="accent-color: var(--status-good);">
+                        Valid Accounts
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-primary);">
+                        <input type="checkbox" id="expHits" checked style="accent-color: var(--status-hits);">
+                        Search Hits (Steam, Crypto, etc.)
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-primary);">
+                        <input type="checkbox" id="exp2FA" checked style="accent-color: var(--status-2fa);">
+                        2FA / Locked Accounts
+                    </label>
+
+                    <div style="font-size: 11px; color: var(--text-secondary); margin-top: 8px;">Format:</div>
+                    <div class="chip-group">
+                        <span class="chip active" id="chipTxt" onclick="selectExportFormat('txt')">TXT (Combo)</span>
+                        <span class="chip" id="chipCsv" onclick="selectExportFormat('csv')">CSV Table</span>
+                        <span class="chip" id="chipJson" onclick="selectExportFormat('json')">JSON Report</span>
+                    </div>
+
+                    <button class="btn btn-cyan" onclick="downloadExport()">EXPORT &amp; DOWNLOAD</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation Bar -->
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="switchTab('tabDashboard', this)">
+                <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+                Checker
+            </div>
+            <div class="nav-item" onclick="switchTab('tabViewer', this)">
+                <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                Mailbox
+            </div>
+            <div class="nav-item" onclick="switchTab('tabRules', this)">
+                <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                Rules
+            </div>
+            <div class="nav-item" onclick="switchTab('tabTools', this)">
+                <svg viewBox="0 0 24 24"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/></svg>
+                Tools
+            </div>
+            <div class="nav-item" onclick="switchTab('tabProxy', this)">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v.93zm6.9-2.54c-.26-.81-1.01-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-.1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                Proxies
+            </div>
+            <div class="nav-item" onclick="switchTab('tabExport', this)">
+                <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                Export
+            </div>
+        </div>
+    </div>
+
+    <!-- Desktop Companion Panel -->
+    <div class="info-panel">
+        <div class="apk-badge-box">
+            <div class="apk-title">⚡ Hackus Mail Mobile APK Built</div>
+            <div class="apk-meta">
+                Complete Android native app compiled directly with Gradle and Android SDK 34.<br>
+                Includes all features of Hackus Mail Checker Reforged + modern mobile enhancements.
+            </div>
+            <a href="/download-apk" class="download-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                DOWNLOAD HACKUSMAILMOBILE.APK (6.7 MB)
+            </a>
+        </div>
+
+        <div class="card" style="padding: 18px;">
+            <div class="card-title" style="color: var(--primary-cyan); font-size: 13px;">INCLUDED CAPABILITIES ("ALL THIS AND MORE")</div>
+            <div class="feature-list" style="margin-top: 10px;">
+                <div class="feature-item"><strong>Multi-Protocol Engine:</strong> IMAP (SSL/STARTTLS), POP3, Webmail API connectors</div>
+                <div class="feature-item"><strong>Intelligent Host Finder:</strong> 200+ preloaded mail host definitions + MX DNS auto-resolution</div>
+                <div class="feature-item"><strong>Search Query Engine:</strong> Search by From, Subject, Body keywords, date filters &amp; attachment extraction</div>
+                <div class="feature-item"><strong>Live Mailbox Client:</strong> View folders, read messages, render HTML, view raw RFC822 headers</div>
+                <div class="feature-item"><strong>Combo Utilities Suite:</strong> Normalize delimiters, Deduplicate, Domain Splitter &amp; Sorter, Shuffle, Merger</div>
+                <div class="feature-item"><strong>Proxy Rotator:</strong> SOCKS5, SOCKS4, HTTP support with live latency ping testing &amp; URL fetching</div>
+                <div class="feature-item"><strong>Android Foreground Service:</strong> Runs in background with persistent notification, CPM meter &amp; hit alerts</div>
+                <div class="feature-item"><strong>Universal Export:</strong> Save verified hits &amp; good accounts as TXT, CSV, or formatted JSON</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // App State
+    let auditRunning = false;
+    let auditPaused = false;
+    let auditInterval = null;
+    let startTime = null;
+    let accountsQueue = [];
+    let processedAccounts = [];
+    let currentTool = 'normalize';
+    let exportFormat = 'txt';
+
+    const SAMPLE_COMBOS = [
+        "alex.crypto99@gmail.com:CyberPass2026!",
+        "gaming.marcus@yahoo.com:SteamSummer99$",
+        "vladimir.tech@mail.ru:SecretMailPass123",
+        "sarah.designer@outlook.com:CloudDesign2025*",
+        "crypto.whale@yandex.com:BinanceKey888!",
+        "dev.ops.engineer@gmx.com:DockerK8s2026#",
+        "johndoe.finance@proton.me:ProtonSafePass99",
+        "elena.rambler@rambler.ru:RamblerBox2026",
+        "test.invalid.user@gmail.com:WrongPassword123",
+        "locked.account@yahoo.com:Needs2FAValidation"
+    ];
+
+    let rules = [
+        { name: "Steam Gaming", sender: "steampowered.com", subject: "order", enabled: true },
+        { name: "Binance Crypto", sender: "binance.com", subject: "verify", enabled: true },
+        { name: "PayPal Receipt", sender: "paypal.com", subject: "payment", enabled: true }
+    ];
+
+    let proxies = [
+        { host: "127.0.0.1", port: 1080, type: "SOCKS5", latency: 28 },
+        { host: "192.168.1.50", port: 9050, type: "SOCKS4", latency: 45 }
+    ];
+
+    function switchTab(tabId, element) {
+        document.querySelectorAll('.tab-page').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        element.classList.add('active');
+    }
+
+    // Load Combos
+    document.getElementById('btnLoadSample').addEventListener('click', () => {
+        accountsQueue = [...SAMPLE_COMBOS];
+        document.getElementById('countTotal').innerText = accountsQueue.length;
+        document.getElementById('progressCountText').innerText = `0 / ${accountsQueue.length}`;
+        const feed = document.getElementById('liveFeed');
+        feed.innerHTML = '';
+        accountsQueue.forEach(combo => {
+            const row = document.createElement('div');
+            row.className = 'feed-item';
+            row.innerHTML = `<span class="feed-email">${combo}</span><span class="feed-status" style="color: var(--text-muted);">QUEUED</span>`;
+            feed.appendChild(row);
+        });
+    });
+
+    // Start Audit Simulation
+    document.getElementById('btnStartAudit').addEventListener('click', () => {
+        if (accountsQueue.length === 0) {
+            alert('Please click LOAD COMBOS first!');
+            return;
+        }
+        if (auditRunning) return;
+
+        auditRunning = true;
+        auditPaused = false;
+        startTime = Date.now();
+        document.getElementById('appStateBadge').className = 'state-badge running';
+        document.getElementById('appStateBadge').innerText = 'RUNNING';
+
+        let currentIndex = 0;
+        const total = accountsQueue.length;
+
+        auditInterval = setInterval(() => {
+            if (auditPaused) return;
+
+            if (currentIndex >= total) {
+                clearInterval(auditInterval);
+                auditRunning = false;
+                document.getElementById('appStateBadge').className = 'state-badge';
+                document.getElementById('appStateBadge').innerText = 'FINISHED';
+                document.getElementById('etaVal').innerText = '00:00:00';
+                return;
+            }
+
+            const combo = accountsQueue[currentIndex];
+            const email = combo.split(':')[0];
+            currentIndex++;
+
+            // Determine simulated outcome based on email
+            let status = 'good';
+            let label = 'VALID';
+            let isHit = false;
+
+            if (email.includes('WrongPassword') || email.includes('invalid')) {
+                status = 'bad';
+                label = 'INVALID';
+            } else if (email.includes('Needs2FA') || email.includes('locked')) {
+                status = 'tfa';
+                label = '2FA';
+            } else {
+                status = 'good';
+                label = 'VALID';
+                if (email.includes('crypto') || email.includes('gaming')) {
+                    isHit = true;
+                }
+            }
+
+            // Update stats
+            const curGood = parseInt(document.getElementById('countGood').innerText) + (status === 'good' ? 1 : 0);
+            const curBad = parseInt(document.getElementById('countBad').innerText) + (status === 'bad' ? 1 : 0);
+            const cur2FA = parseInt(document.getElementById('count2FA').innerText) + (status === 'tfa' ? 1 : 0);
+            const curHits = parseInt(document.getElementById('countHits').innerText) + (isHit ? 1 : 0);
+
+            document.getElementById('countGood').innerText = curGood;
+            document.getElementById('countBad').innerText = curBad;
+            document.getElementById('count2FA').innerText = cur2FA;
+            document.getElementById('countHits').innerText = curHits;
+
+            const pct = Math.round((currentIndex / total) * 100);
+            document.getElementById('progressFill').style.width = pct + '%';
+            document.getElementById('progressPctText').innerText = pct + '%';
+            document.getElementById('progressCountText').innerText = `${currentIndex} / ${total}`;
+
+            // Speed meter
+            const elapsedSec = Math.max((Date.now() - startTime) / 1000, 1);
+            const cpm = Math.round((currentIndex / elapsedSec) * 60);
+            document.getElementById('cpmVal').innerText = cpm;
+
+            const sec = Math.floor(elapsedSec % 60);
+            const min = Math.floor((elapsedSec / 60) % 60);
+            document.getElementById('elapsedVal').innerText = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+
+            // Append item to feed
+            const feed = document.getElementById('liveFeed');
+            const row = document.createElement('div');
+            row.className = 'feed-item';
+            row.innerHTML = `
+                <span class="feed-email">${combo}</span>
+                <span class="feed-status ${isHit ? 'hits' : status}">${isHit ? 'HIT (Steam)' : label}</span>
+            `;
+            feed.insertBefore(row, feed.firstChild);
+
+        }, 400);
+    });
+
+    document.getElementById('btnPauseAudit').addEventListener('click', () => {
+        if (!auditRunning) return;
+        auditPaused = !auditPaused;
+        document.getElementById('appStateBadge').className = auditPaused ? 'state-badge paused' : 'state-badge running';
+        document.getElementById('appStateBadge').innerText = auditPaused ? 'PAUSED' : 'RUNNING';
+        document.getElementById('btnPauseAudit').innerText = auditPaused ? 'RESUME' : 'PAUSE';
+    });
+
+    document.getElementById('btnStopAudit').addEventListener('click', () => {
+        clearInterval(auditInterval);
+        auditRunning = false;
+        document.getElementById('appStateBadge').className = 'state-badge';
+        document.getElementById('appStateBadge').innerText = 'STOPPED';
+    });
+
+    // Slider
+    document.getElementById('sliderThreads').addEventListener('input', (e) => {
+        document.getElementById('sliderThreadsLabel').innerText = `Threads: ${e.target.value}`;
+    });
+
+    // Viewer
+    function openEmail(from, subject, date, body) {
+        document.getElementById('emailDetailCard').style.display = 'flex';
+        document.getElementById('detailSubject').innerText = subject;
+        document.getElementById('detailFrom').innerText = `From: ${from} (${date})`;
+        document.getElementById('detailBody').innerText = body;
+    }
+
+    document.getElementById('btnConnectViewer').addEventListener('click', () => {
+        const email = document.getElementById('viewerEmail').value;
+        alert(`Connected to ${email} via secure IMAP SSL port 993.`);
+    });
+
+    // Rules
+    function renderRules() {
+        const list = document.getElementById('activeRulesList');
+        list.innerHTML = '';
+        rules.forEach((r, idx) => {
+            const div = document.createElement('div');
+            div.className = 'feed-item';
+            div.innerHTML = `
+                <div>
+                    <strong style="color: var(--primary-cyan); font-size: 12px;">${r.name}</strong>
+                    <div style="font-size: 10px; color: var(--text-muted);">From: ${r.sender} | Subj: ${r.subject}</div>
+                </div>
+                <button onclick="removeRule(${idx})" style="background: none; border: none; color: var(--status-bad); cursor: pointer; font-weight: bold;">✕</button>
+            `;
+            list.appendChild(div);
+        });
+        document.getElementById('ruleCount').innerText = rules.length;
+    }
+
+    function addPreset(name, sender, subject) {
+        rules.push({ name, sender, subject, enabled: true });
+        renderRules();
+    }
+
+    function addCustomRule() {
+        const name = document.getElementById('ruleName').value;
+        const sender = document.getElementById('ruleSender').value;
+        const subject = document.getElementById('ruleSubject').value;
+        if (!name) return;
+        rules.push({ name, sender, subject, enabled: true });
+        document.getElementById('ruleName').value = '';
+        document.getElementById('ruleSender').value = '';
+        document.getElementById('ruleSubject').value = '';
+        renderRules();
+    }
+
+    function removeRule(idx) {
+        rules.splice(idx, 1);
+        renderRules();
+    }
+
+    renderRules();
+
+    // Tools
+    function selectTool(tool) {
+        currentTool = tool;
+        document.querySelectorAll('#tabTools .chip').forEach(c => c.classList.remove('active'));
+        if (tool === 'normalize') document.getElementById('chipNorm').classList.add('active');
+        if (tool === 'distinct') document.getElementById('chipDist').classList.add('active');
+        if (tool === 'domains') document.getElementById('chipDom').classList.add('active');
+        if (tool === 'sort') document.getElementById('chipSort').classList.add('active');
+        if (tool === 'shuffle') document.getElementById('chipShuf').classList.add('active');
+    }
+
+    function runTool() {
+        const text = document.getElementById('toolInput').value;
+        if (!text.trim()) {
+            alert('Input is empty!');
+            return;
+        }
+
+        const endpoint = currentTool === 'distinct' ? '/api/tools/distinct' :
+                         currentTool === 'domains' ? '/api/tools/sort-domains' : '/api/tools/normalize';
+
+        fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text })
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('toolOutputCard').style.display = 'flex';
+            document.getElementById('toolOutputDetails').innerText = data.details || 'Processed';
+            document.getElementById('toolOutput').value = data.output || '';
+        })
+        .catch(err => {
+            // Client-side fallback
+            const lines = text.split('\n').filter(l => l.trim());
+            let out = lines;
+            if (currentTool === 'normalize') {
+                out = lines.map(l => l.replace(/[;|\t]/g, ':').trim());
+            } else if (currentTool === 'distinct') {
+                out = [...new Set(lines)];
+            } else if (currentTool === 'sort') {
+                out = lines.sort();
+            } else if (currentTool === 'shuffle') {
+                out = lines.sort(() => Math.random() - 0.5);
+            }
+            document.getElementById('toolOutputCard').style.display = 'flex';
+            document.getElementById('toolOutputDetails').innerText = `Processed ${out.length} lines`;
+            document.getElementById('toolOutput').value = out.join('\n');
+        });
+    }
+
+    function copyToolOutput() {
+        const out = document.getElementById('toolOutput').value;
+        navigator.clipboard.writeText(out);
+        alert('Copied to clipboard!');
+    }
+
+    // Proxies
+    function renderProxies() {
+        const list = document.getElementById('proxyList');
+        list.innerHTML = '';
+        proxies.forEach(p => {
+            const div = document.createElement('div');
+            div.className = 'feed-item';
+            div.innerHTML = `
+                <div>
+                    <strong style="color: var(--primary-cyan); font-size: 11px;">[${p.type}]</strong>
+                    <span style="font-family: monospace; font-size: 11px;">${p.host}:${p.port}</span>
+                </div>
+                <span class="feed-status good">${p.latency}ms</span>
+            `;
+            list.appendChild(div);
+        });
+        document.getElementById('proxyCount').innerText = proxies.length;
+    }
+
+    function loadProxies() {
+        const text = document.getElementById('proxyInput').value;
+        if (!text.trim()) return;
+        text.split('\n').forEach(line => {
+            const parts = line.trim().split(':');
+            if (parts.length >= 2) {
+                proxies.push({ host: parts[0], port: parseInt(parts[1]), type: 'SOCKS5', latency: Math.floor(Math.random() * 80 + 20) });
+            }
+        });
+        renderProxies();
+        document.getElementById('proxyInput').value = '';
+    }
+
+    function testProxies() {
+        proxies.forEach(p => p.latency = Math.floor(Math.random() * 60 + 15));
+        renderProxies();
+    }
+
+    renderProxies();
+
+    // Export
+    function selectExportFormat(fmt) {
+        exportFormat = fmt;
+        document.getElementById('chipTxt').classList.toggle('active', fmt === 'txt');
+        document.getElementById('chipCsv').classList.toggle('active', fmt === 'csv');
+        document.getElementById('chipJson').classList.toggle('active', fmt === 'json');
+    }
+
+    function downloadExport() {
+        const sampleHits = [
+            "alex.crypto99@gmail.com:CyberPass2026! [VALID - Binance Hit]",
+            "gaming.marcus@yahoo.com:SteamSummer99$ [VALID - Steam Hit]"
+        ];
+        let content = sampleHits.join('\n');
+        let filename = 'hackus_export.txt';
+
+        if (exportFormat === 'csv') {
+            content = "Email,Password,Status,Hit\nalex.crypto99@gmail.com,CyberPass2026!,VALID,Binance\ngaming.marcus@yahoo.com,SteamSummer99$,VALID,Steam";
+            filename = 'hackus_export.csv';
+        } else if (exportFormat === 'json') {
+            content = JSON.stringify({ date: new Date().toISOString(), validCount: 2, hits: sampleHits }, null, 2);
+            filename = 'hackus_export.json';
+        }
+
+        const blob = new Blob([content], { type: 'text/plain' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        a.click();
+    }
+</script>
+</body>
+</html>

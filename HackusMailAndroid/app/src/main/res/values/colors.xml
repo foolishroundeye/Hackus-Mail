@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Cyber Dark Palette -->
+    <color name="bg_main">#0A0E17</color>
+    <color name="bg_surface">#131B2E</color>
+    <color name="bg_surface_elevated">#1E293B</color>
+    <color name="bg_card">#162036</color>
+    <color name="bg_card_border">#2A3854</color>
+
+    <!-- Neon Accents -->
+    <color name="primary_cyan">#00E5FF</color>
+    <color name="primary_blue">#00B0FF</color>
+    <color name="accent_purple">#7C4DFF</color>
+    <color name="accent_pink">#FF4081</color>
+
+    <!-- Status Colors -->
+    <color name="status_good">#00E676</color>
+    <color name="status_good_bg">#113824</color>
+    <color name="status_bad">#FF1744</color>
+    <color name="status_bad_bg">#3D141C</color>
+    <color name="status_2fa">#FF9100</color>
+    <color name="status_2fa_bg">#3D270F</color>
+    <color name="status_error">#FFEA00</color>
+    <color name="status_error_bg">#3D3910</color>
+    <color name="status_hits">#D500F9</color>
+    <color name="status_hits_bg">#350F3D</color>
+
+    <!-- Typography -->
+    <color name="text_primary">#F8FAFC</color>
+    <color name="text_secondary">#94A3B8</color>
+    <color name="text_muted">#64748B</color>
+    <color name="divider_color">#22304A</color>
+
+    <!-- Standard Material Colors -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="transparent">#00000000</color>
+</resources>
