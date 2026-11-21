@@ -51,6 +51,16 @@
                     android:textSize="11sp" />
             </LinearLayout>
 
+            <!-- Export Action Button -->
+            <ImageButton
+                android:id="@+id/btnToolbarExport"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_export"
+                android:contentDescription="Export Results" />
+
             <!-- State Badge -->
             <TextView
                 android:id="@+id/headerStateBadge"

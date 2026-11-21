@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity() {
 
         setupViewPager()
         setupBottomNav()
+        setupToolbarActions()
         observeEngineState()
     }
 
@@ -41,8 +42,7 @@ class MainActivity : AppCompatActivity() {
             ViewerFragment(),
             RulesFragment(),
             ToolsFragment(),
-            ProxyFragment(),
-            ExportFragment()
+            ProxyFragment()
         )
 
         binding.viewPager.adapter = object : FragmentStateAdapter(this) {
@@ -65,10 +65,71 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_rules -> binding.viewPager.setCurrentItem(2, true)
                 R.id.nav_tools -> binding.viewPager.setCurrentItem(3, true)
                 R.id.nav_proxy -> binding.viewPager.setCurrentItem(4, true)
-                R.id.nav_export -> binding.viewPager.setCurrentItem(5, true)
             }
             true
         }
+    }
+
+    private fun setupToolbarActions() {
+        binding.btnToolbarExport.setOnClickListener {
+            showExportDialog()
+        }
+    }
+
+    private fun showExportDialog() {
+        val options = arrayOf(
+            "Share Valid Accounts (TXT)",
+            "Share Search Hits (TXT)",
+            "Share Full Audit (CSV)",
+            "Share Full Report (JSON)"
+        )
+
+        androidx.appcompat.app.AlertDialog.Builder(this, com.google.android.material.R.style.Theme_Material3_Dark_Dialog)
+            .setTitle("Export & Share Audit Results")
+            .setItems(options) { _, which ->
+                val content = when (which) {
+                    0 -> {
+                        val valids = CheckerEngine.getValidAccounts()
+                        if (valids.isEmpty()) "No valid accounts yet."
+                        else valids.joinToString("\n") { it.combo }
+                    }
+                    1 -> {
+                        val hits = CheckerEngine.getHits()
+                        if (hits.isEmpty()) "No search hits yet."
+                        else hits.joinToString("\n") { "[${it.queryName}] ${it.accountEmail} | From: ${it.from} | Subj: ${it.subject}" }
+                    }
+                    2 -> {
+                        val all = CheckerEngine.getProcessedAccounts()
+                        buildString {
+                            append("Email,Password,Status,Domain,Host,Port,Hits\n")
+                            all.forEach {
+                                append("${it.email},${it.pass},${it.status.name},${it.domain},${it.serverHost},${it.serverPort},${it.searchHits.size}\n")
+                            }
+                        }
+                    }
+                    3 -> {
+                        val gson = com.google.gson.GsonBuilder().setPrettyPrinting().create()
+                        val payload = mapOf(
+                            "exportDate" to System.currentTimeMillis(),
+                            "stats" to CheckerEngine.statsFlow.value,
+                            "accounts" to CheckerEngine.getProcessedAccounts(),
+                            "hits" to CheckerEngine.getHits()
+                        )
+                        gson.toJson(payload)
+                    }
+                    else -> ""
+                }
+
+                val sendIntent = android.content.Intent().apply {
+                    action = android.content.Intent.ACTION_SEND
+                    putExtra(android.content.Intent.EXTRA_TEXT, content)
+                    putExtra(android.content.Intent.EXTRA_TITLE, "Hackus Mail Export")
+                    type = "text/plain"
+                }
+                startActivity(android.content.Intent.createChooser(sendIntent, "Share Export Via"))
+            }
+            .setNegativeButton("Close", null)
+            .show()
     }
 
     private fun observeEngineState() {
