@@ -20,8 +20,4 @@
         android:id="@+id/nav_proxy"
         android:icon="@drawable/ic_proxy"
         android:title="@string/nav_proxy" />
-    <item
-        android:id="@+id/nav_export"
-        android:icon="@drawable/ic_export"
-        android:title="@string/nav_export" />
 </menu>
